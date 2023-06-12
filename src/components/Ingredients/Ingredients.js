@@ -1,4 +1,4 @@
-import React, { useReducer, useState, useEffect, useCallback } from "react";
+import React, { useReducer, useEffect, useCallback } from "react";
 
 import IngredientForm from "./IngredientForm";
 import IngredientList from "./IngredientList";
@@ -27,21 +27,49 @@ const ingredientReducer = (currentIngredients, action) => {
   }
 };
 
+const httpActions = {
+  SEND_REQUEST: "SEND REQUEST",
+  RESPONSE: "RESPONSE",
+  ERROR: "ERROR",
+  CLEAR: "CLEAR",
+};
+
+const httpReducer = (currHttpState, action) => {
+  switch (action.type) {
+    case httpActions.SEND_REQUEST:
+      return { loading: true, error: null };
+    case httpActions.RESPONSE:
+      return { ...currHttpState, loading: false };
+    case httpActions.ERROR:
+      return { loading: false, error: action.errorMessage };
+    case httpActions.CLEAR:
+      return { ...currHttpState, error: null };
+
+    default:
+      throw new Error("Should not be reached!");
+  }
+};
+
 const Ingredients = () => {
   const [userIngredients, dispatch] = useReducer(ingredientReducer, []);
   // const [userIngredients, setUserIngredients] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState();
+  // const [isLoading, setIsLoading] = useState(false);
+  // const [error, setError] = useState();
+  const [httpState, dispatchHttp] = useReducer(httpReducer, {
+    loading: false,
+    error: null,
+  });
 
   useEffect(() => {
     console.log("RENDERING INGREDIENTS", userIngredients);
   }, [userIngredients]);
 
   const addIngredientHandler = (ingredient) => {
-    setIsLoading(true);
+    // setIsLoading(true);
+    dispatchHttp({ type: httpActions.SEND_REQUEST });
 
     addIngredient(ingredient).then((data) => {
-      setIsLoading(false);
+      // setIsLoading(false);
       // setUserIngredients((prevIngredients) => [
       //   ...prevIngredients,
       //   {
@@ -49,6 +77,8 @@ const Ingredients = () => {
       //     ...ingredient,
       //   },
       // ]);
+
+      dispatchHttp({ type: httpActions.RESPONSE });
 
       dispatch({
         type: ingredientActions.ADD_INGREDIENT,
@@ -61,16 +91,19 @@ const Ingredients = () => {
   };
 
   const removeIngredientHandler = (ingredientId) => {
-    setIsLoading(true);
+    // setIsLoading(true);
+    dispatchHttp({ type: httpActions.SEND_REQUEST });
 
     removeIngredient(ingredientId)
       .then(() => {
-        setIsLoading(false);
+        // setIsLoading(false);
         // setUserIngredients((prevIngredients) => {
         //   return prevIngredients.filter(
         //     (ingredient) => ingredient.id !== ingredientId
         //   );
         // });
+
+        dispatchHttp({ type: httpActions.RESPONSE });
 
         dispatch({
           type: ingredientActions.DELETE_INGREDIENT,
@@ -78,8 +111,11 @@ const Ingredients = () => {
         });
       })
       .catch((error) => {
-        setError("Something went wrong");
-        setIsLoading(false);
+        const message = "Something went wrong";
+        // setError(message);
+        // setIsLoading(false);
+
+        dispatchHttp({ type: httpActions.ERROR, errorMessage: message });
       });
   };
 
@@ -92,16 +128,19 @@ const Ingredients = () => {
   }, []);
 
   const clearError = () => {
-    setError(null);
+    // setError(null);
+    dispatchHttp({ type: httpActions.CLEAR });
   };
 
   return (
     <div className="App">
-      {error && <ErrorModal onClose={clearError}>{error}</ErrorModal>}
+      {httpState.error && (
+        <ErrorModal onClose={clearError}>{httpState.error}</ErrorModal>
+      )}
 
       <IngredientForm
         onAddIngredient={addIngredientHandler}
-        loading={isLoading}
+        loading={httpState.loading}
       />
 
       <section>
