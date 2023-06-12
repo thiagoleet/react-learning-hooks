@@ -9,6 +9,8 @@ const IngredientForm = React.memo((props) => {
   const [enteredTitle, setEnteredTitle] = useState("");
   const [enteredAmount, setEnteredAmount] = useState("");
 
+  console.log("RENDERING INGREDIENT FORM");
+
   const inputTitleHandler = (event) => {
     const newTitle = event.target.value;
 
@@ -53,7 +55,9 @@ const IngredientForm = React.memo((props) => {
             />
           </div>
           <div className="ingredient-form__actions">
-            <button type="submit" disabled={props.loading}>Add Ingredient</button>
+            <button type="submit" disabled={props.loading}>
+              Add Ingredient
+            </button>
             {props.loading && <LoadingIndicator />}
           </div>
         </form>
