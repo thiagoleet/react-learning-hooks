@@ -127,10 +127,10 @@ const Ingredients = () => {
     });
   }, []);
 
-  const clearError = () => {
+  const clearError = useCallback(() => {
     // setError(null);
     dispatchHttp({ type: httpActions.CLEAR });
-  };
+  }, []);
 
   const ingredientList = useMemo(() => {
     return (
