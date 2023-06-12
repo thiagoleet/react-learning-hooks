@@ -7,13 +7,17 @@ import { addIngredient, removeIngredient } from "../../util";
 
 const Ingredients = () => {
   const [userIngredients, setUserIngredients] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     console.log("RENDERING INGREDIENTS", userIngredients);
   }, [userIngredients]);
 
   const addIngredientHandler = (ingredient) => {
+    setIsLoading(true);
+
     addIngredient(ingredient).then((data) => {
+      setIsLoading(false);
       setUserIngredients((prevIngredients) => [
         ...prevIngredients,
         {
@@ -25,7 +29,10 @@ const Ingredients = () => {
   };
 
   const removeIngredientHandler = (ingredientId) => {
-    removeIngredient(ingredientId).then((response) => {
+    setIsLoading(true);
+
+    removeIngredient(ingredientId).then(() => {
+      setIsLoading(false);
       setUserIngredients((prevIngredients) => {
         return prevIngredients.filter(
           (ingredient) => ingredient.id !== ingredientId
@@ -40,7 +47,10 @@ const Ingredients = () => {
 
   return (
     <div className="App">
-      <IngredientForm onAddIngredient={addIngredientHandler} />
+      <IngredientForm
+        onAddIngredient={addIngredientHandler}
+        loading={isLoading}
+      />
 
       <section>
         <Search onLoadIngredients={filteredIngredientsHandler} />
