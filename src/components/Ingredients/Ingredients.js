@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import IngredientForm from "./IngredientForm";
 import IngredientList from "./IngredientList";
 import Search from "./Search";
-import { addIngredient } from "../../util";
+import { addIngredient, removeIngredient } from "../../util";
 
 const Ingredients = () => {
   const [userIngredients, setUserIngredients] = useState([]);
@@ -25,10 +25,12 @@ const Ingredients = () => {
   };
 
   const removeIngredientHandler = (ingredientId) => {
-    setUserIngredients((prevIngredients) => {
-      return prevIngredients.filter(
-        (ingredient) => ingredient.id !== ingredientId
-      );
+    removeIngredient(ingredientId).then((response) => {
+      setUserIngredients((prevIngredients) => {
+        return prevIngredients.filter(
+          (ingredient) => ingredient.id !== ingredientId
+        );
+      });
     });
   };
 

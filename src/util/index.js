@@ -1,5 +1,7 @@
-export const API_URL =
-  "https://react-hooks-update-a4e09-default-rtdb.firebaseio.com/ingredients.json";
+export const BASE_API_URL =
+  "https://react-hooks-update-a4e09-default-rtdb.firebaseio.com/ingredients";
+
+export const API_URL = `${BASE_API_URL}.json`;
 
 /**
  *
@@ -34,4 +36,13 @@ export const addIngredient = (ingredient) => {
     body: JSON.stringify(ingredient),
     header: { ContentType: "application/json" },
   }).then((response) => response.json);
+};
+
+/**
+ * 
+ * @param {*} ingredientId 
+ * @returns 
+ */
+export const removeIngredient = (ingredientId) => {
+  return fetch(`${BASE_API_URL}/${ingredientId}.json`, { method: "DELETE" });
 };
