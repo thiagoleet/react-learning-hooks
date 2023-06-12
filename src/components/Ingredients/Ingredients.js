@@ -1,11 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 
 import IngredientForm from "./IngredientForm";
 import IngredientList from "./IngredientList";
 import Search from "./Search";
-
-const API_URL =
-  "https://react-hooks-update-a4e09-default-rtdb.firebaseio.com/ingredients.json";
+import { API_URL } from "../../util";
 
 const Ingredients = () => {
   const [userIngredients, setUserIngredients] = useState([]);
@@ -13,23 +11,6 @@ const Ingredients = () => {
   useEffect(() => {
     console.log("RENDERING INGREDIENTS", userIngredients);
   }, [userIngredients]);
-
-  useEffect(() => {
-    fetch(API_URL)
-      .then((response) => response.json())
-      .then((data) => {
-        const loadedIngredients = [];
-        for (const key in data) {
-          loadedIngredients.push({
-            id: key,
-            title: data[key].title,
-            amount: data[key].amount,
-          });
-        }
-        
-        setUserIngredients(loadedIngredients);
-      });
-  }, []);
 
   const addIngredientHandler = (ingredient) => {
     fetch(API_URL, {
@@ -57,12 +38,16 @@ const Ingredients = () => {
     });
   };
 
+  const filteredIngredientsHandler = useCallback((filteredIngredients) => {
+    setUserIngredients(filteredIngredients);
+  }, []);
+
   return (
     <div className="App">
       <IngredientForm onAddIngredient={addIngredientHandler} />
 
       <section>
-        <Search />
+        <Search onLoadIngredients={filteredIngredientsHandler} />
         <IngredientList
           ingredients={userIngredients}
           onRemoveItem={removeIngredientHandler}
