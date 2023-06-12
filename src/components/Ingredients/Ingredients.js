@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import IngredientForm from "./IngredientForm";
 import IngredientList from "./IngredientList";
 import Search from "./Search";
-import { API_URL } from "../../util";
+import { addIngredient } from "../../util";
 
 const Ingredients = () => {
   const [userIngredients, setUserIngredients] = useState([]);
@@ -13,21 +13,15 @@ const Ingredients = () => {
   }, [userIngredients]);
 
   const addIngredientHandler = (ingredient) => {
-    fetch(API_URL, {
-      method: "POST",
-      body: JSON.stringify(ingredient),
-      header: { ContentType: "application/json" },
-    })
-      .then((response) => response.json)
-      .then((data) => {
-        setUserIngredients((prevIngredients) => [
-          ...prevIngredients,
-          {
-            id: data.name,
-            ...ingredient,
-          },
-        ]);
-      });
+    addIngredient(ingredient).then((data) => {
+      setUserIngredients((prevIngredients) => [
+        ...prevIngredients,
+        {
+          id: data.name,
+          ...ingredient,
+        },
+      ]);
+    });
   };
 
   const removeIngredientHandler = (ingredientId) => {

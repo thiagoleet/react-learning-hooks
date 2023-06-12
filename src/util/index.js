@@ -22,3 +22,16 @@ export const getIngredients = (filter, callback) => {
       callback(loadedIngredients);
     });
 };
+
+/**
+ *
+ * @param {*} ingredient
+ * @returns
+ */
+export const addIngredient = (ingredient) => {
+  return fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify(ingredient),
+    header: { ContentType: "application/json" },
+  }).then((response) => response.json);
+};
