@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 
 import Card from "../UI/Card";
 import "./Search.css";
-import { API_URL } from "../../util";
+import { getIngredients } from "../../util";
 
 const Search = React.memo((props) => {
   const { onLoadIngredients } = props;
@@ -16,21 +16,7 @@ const Search = React.memo((props) => {
           enteredFilter.length === 0
             ? ""
             : `?orderBy="title"&equalTo="${enteredFilter}"`;
-
-        fetch(`${API_URL}${query}`)
-          .then((response) => response.json())
-          .then((data) => {
-            const loadedIngredients = [];
-            for (const key in data) {
-              loadedIngredients.push({
-                id: key,
-                title: data[key].title,
-                amount: data[key].amount,
-              });
-            }
-
-            onLoadIngredients(loadedIngredients);
-          });
+        getIngredients(query, onLoadIngredients);
       }
     }, 500);
 
